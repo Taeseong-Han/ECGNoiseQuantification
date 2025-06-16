@@ -4,7 +4,7 @@ import numpy as np
 import jax.numpy as jnp
 import torch.nn.functional as F
 
-from preprocessing.superlet_core import adaptive_superlet_transform
+from .superlet_core import adaptive_superlet_transform
 
 
 def compute_superlet_scalogram(
