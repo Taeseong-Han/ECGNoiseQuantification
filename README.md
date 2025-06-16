@@ -55,8 +55,8 @@ This autoencoder acts as the feature compressor for the latent diffusion model a
 > The same CLI pattern applies to training:
 >
 > - `autoencoder`
-> - `vanilla_diffusion`
 > - `latent_diffusion`
+> - `vanilla_diffusion`
 >
 > Simply execute:
 >
