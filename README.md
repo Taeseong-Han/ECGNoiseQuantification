@@ -30,12 +30,15 @@ python -m preprocessing.superlet_transform_ptbxl \
 ```
 
 Replace [PTBXL_RAW_PATH] with the full path to your downloaded PTB-XL dataset.
+
 Example:
+
 ```bash
 --ptbxl_raw_path ~/Database/physionet.org/files/ptb-xl/1.0.3
 ```
 
 📥 Download PTB-XL Dataset
+
 You can download the raw PTB-XL dataset from PhysioNet:
 
 🔗 https://physionet.org/content/ptb-xl/1.0.3/
