@@ -65,7 +65,7 @@ This autoencoder acts as the feature compressor for the latent diffusion model a
 > ```
 > View all available arguments using:
 > ```bash
-> python -m train.train_autoencoder --help
+> python -m train.[script_name] --help
 > ```
 
 ## 🧪 Example Usage
