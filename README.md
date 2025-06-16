@@ -27,7 +27,7 @@ To convert raw PTB-XL ECG recordings into superlet scalograms, run the following
 \`\`\`bash
 python -m preprocessing.superlet_transform_ptbxl \
   --ptbxl_raw_path [PTBXL_RAW_PATH]
-\'\'\'
+\`\`\`
 
 
 ## 🧪 Example Usage
