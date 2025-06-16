@@ -48,6 +48,22 @@ To train the autoencoder on the superlet-transformed PTB-XL dataset, run the fol
 ```bash
 python -m train.train_autoencoder --discretization
 ```
+This will launch training with default settings using discretized superlet scalograms. You can customize training using additional arguments.
+This autoencoder acts as the feature compressor for the Latent Diffusion Model and must be trained before running the diffusion-based training pipeline.
+
+> ⚠️ The training script structure is unified across this project.  
+> The same CLI pattern applies to training:
+>
+> - `autoencoder`
+> - `vanilla_diffusion`
+> - `latent_diffusion`
+>
+> Simply execute:
+>
+> ```bash
+> python -m train.[script_name] [options]
+> ```
+
 
 
 ## 🧪 Example Usage
