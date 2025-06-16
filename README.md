@@ -4,22 +4,20 @@
 
 This repository contains the official implementation of  
 **"Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection"**  
-Han *et al.*, arXiv:2506.11815
+Paper: [![arXiv](https://img.shields.io/badge/arXiv-2506.11815-b31b1b.svg)](https://arxiv.org/abs/2506.11815)
 
-We propose a label-free, reconstruction-based framework that quantifies ECG noise using diffusion models.  
-Trained only on clean signals, the model reconstructs ECG scalograms and estimates noise severity based on reconstruction errors.
 
-Reconstruction quality is measured using **Peak Signal-to-Noise Ratio (PSNR)**, providing a continuous estimate of local signal degradation. To assess model performance in distinguishing clean from noisy inputs—even under mislabeled or ambiguous conditions—we use the **Wasserstein-1 distance ($W_1$)** between reconstruction error distributions as a robust, distribution-level evaluation metric.
+This study introduces a diffusion-based framework for ECG noise quantification using reconstruction-based anomaly detection.  
+The model is trained solely on clean ECG signals, learning to reconstruct clean representations from potentially noisy inputs.  
+Reconstruction errors serve as a proxy for noise levels without requiring explicit noise labels during inference.
 
-**Key features:**
-- ✅ Label-free anomaly detection without synthetic noise
-- 🚀 Lightweight inference (3-step DDIM)
-- 📊 Superior $W_1$ performance across PTB-XL, BUT QDB, CinC, NSTDB
-- 🧠 Real-world clinical applications: arrhythmia detection, long-term ECG monitoring
+To address label inconsistencies and improve generalizability, we adopt a **distributional evaluation** strategy using the **Wasserstein-1 distance ($W_1$)**.  
+By comparing the reconstruction error distributions of clean and noise-labeled ECGs, the model can:
+- Identify optimal architectures and sampling configurations
+- Detect mislabeled samples
+- Refine the training dataset through low-error selection
 
-📄 Paper: [arXiv:2506.11815](https://arxiv.org/abs/2506.11815)
-
-## 🖼️ Framework Overview
+Our final model achieves robust noise quantification with only **three reverse diffusion steps**, enabling efficient and scalable deployment in real-world settings.
 
 ![Framework Overview](figures/Framework_overview.jpg)
 
