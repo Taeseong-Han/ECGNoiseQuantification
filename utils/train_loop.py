@@ -124,7 +124,7 @@ def train_loop(
             progress_bar.set_postfix(**logs)
             accelerator.log(logs, step=global_step)
             global_step += 1
-
+            break
         progress_bar.close()
 
         # Save checkpoints periodically
