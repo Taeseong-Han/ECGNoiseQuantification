@@ -18,7 +18,7 @@ def get_parser():
     parser.add_argument('--superlet_dir', type=Path,
                         default=Path(__file__).resolve().parents[1] / "data/database/ptbxl_superlet32")
     parser.add_argument('--model_path', type=Path,
-                        default=Path(__file__).resolve().parents[1] / "output/autoencoder")
+                        default=Path(__file__).resolve().parents[1] / "output/ae_model")
 
     parser.add_argument('--learning_rate', type=float, default=1e-4)
     parser.add_argument('--ema_rate', type=float, default=0.999,
