@@ -20,6 +20,16 @@ Our final model achieves robust noise quantification with only **three reverse d
 ### 🖼️ Framework Overview
 ![Framework Overview](figures/Framework_overview.jpg)
 
+## 🔄 Run Superlet Transform on PTB-XL Data
+
+To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
+
+```bash
+python -m preprocessing.superlet_transform_ptbxl \
+  --ptbxl_raw_path [PTBXL_RAW_PATH]
+
+
+
 ## 🧪 Example Usage
 
 ## 📄 License and Citation

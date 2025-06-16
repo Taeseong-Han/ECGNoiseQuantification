@@ -16,7 +16,7 @@ class PTBXLDataset(Dataset):
 
         # self.path = DATABASE_PTBXL / superlet_dir
         # Y = pd.read_csv(Path(__file__).resolve().parent / 'train_clean.csv')
-        print(Path(__file__).resolve().parents[1])
+        print(Path(__file__).resolve().parent / "data/database")
 
     #     self.idx = Y.idx
     #     self.ref_min = ref_min
