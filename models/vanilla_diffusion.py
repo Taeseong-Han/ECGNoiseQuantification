@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .unet import build_dm_unet
+from models.unet import build_dm_unet
 from diffusers import DDPMScheduler, DDIMScheduler
 
 

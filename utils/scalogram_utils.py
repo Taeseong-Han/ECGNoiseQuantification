@@ -2,12 +2,14 @@ import torch
 
 import numpy as np
 
+from typing import Union
+
 
 def scalogram_to_model_input(
-    scalogram: np.ndarray,
-    ref_min: float = -8,
-    ref_max: float = 0,
-    discretize: bool = True
+        scalogram: np.ndarray,
+        ref_min: float = -8,
+        ref_max: float = 0,
+        discretize: bool = True
 ) -> np.ndarray:
     """
     Convert a scalogram to model input format in [-1, 1].
@@ -29,10 +31,10 @@ def scalogram_to_model_input(
 
 
 def scalogram_to_image(
-    scalogram: np.ndarray,
-    ref_min: float = -8,
-    ref_max: float = 0,
-    discretize: bool = True
+        scalogram: np.ndarray,
+        ref_min: float = -8,
+        ref_max: float = 0,
+        discretize: bool = True
 ) -> np.ndarray:
     """
     Convert scalogram to image format in [0, 255] as float32.
@@ -52,9 +54,9 @@ def scalogram_to_image(
 
 
 def model_output_to_image(
-    sample: torch.Tensor | np.ndarray,
+    sample: Union[torch.Tensor, np.ndarray],
     discretize: bool = True
-) -> torch.Tensor | np.ndarray:
+) -> Union[torch.Tensor, np.ndarray]:
     """
     Convert model output from range [-1, 1] to image format in [0, 255].
 
