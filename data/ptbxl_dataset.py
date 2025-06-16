@@ -5,36 +5,39 @@ import torch
 import numpy as np
 import pandas as pd
 
+from pathlib import Path
 from torch.utils.data import Dataset
-
 from utils.file_metrics_sort import FileData, FileDataset
 from utils.scalogram_utils import scalogram_to_model_input
 
-# class PTBXLDataset(Dataset):
-#     def __init__(self, ref_min, ref_max, train_file, superlet_dir, quantization):
-#         # self.path = DATABASE_PTBXL / superlet_dir
-#         # Y = pd.read_csv(PTBXL_DIR / f'train_files/{train_file}')
-#
-#         self.idx = Y.idx
-#         self.ref_min = ref_min
-#         self.ref_max = ref_max
-#         self.files = Y.filename_hr
-#         self.quantization = quantization
-#
-#     def __len__(self):
-#         return len(self.files)
-#
-#     def __getitem__(self, idx):
-#         scalogram = np.load(os.path.join(self.path, f'{self.files[idx]}_{self.idx[idx]}.npz'))['scalogram']
-#         scalogram = scalogram_to_model_input(
-#             scalogram,
-#             self.ref_min,
-#             self.ref_max,
-#             discretize=self.quantization
-#         )
-#         scalogram = torch.FloatTensor(scalogram).unsqueeze(0)
-#
-#         return scalogram
+class PTBXLDataset(Dataset):
+    # def __init__(self, ref_min, ref_max, superlet_dir, quantization):
+    def __init__(self):
+
+        # self.path = DATABASE_PTBXL / superlet_dir
+        # Y = pd.read_csv(Path(__file__).resolve().parent / 'train_clean.csv')
+        print(Path(__file__).resolve().parents[1])
+
+    #     self.idx = Y.idx
+    #     self.ref_min = ref_min
+    #     self.ref_max = ref_max
+    #     self.files = Y.filename_hr
+    #     self.quantization = quantization
+    #
+    # def __len__(self):
+    #     return len(self.files)
+    #
+    # def __getitem__(self, idx):
+    #     scalogram = np.load(os.path.join(self.path, f'{self.files[idx]}_{self.idx[idx]}.npz'))['scalogram']
+    #     scalogram = scalogram_to_model_input(
+    #         scalogram,
+    #         self.ref_min,
+    #         self.ref_max,
+    #         discretize=self.quantization
+    #     )
+    #     scalogram = torch.FloatTensor(scalogram).unsqueeze(0)
+    #
+    #     return scalogram
 
 
 # def sort_ptbxl_metric_data(filename, is_train=False):
