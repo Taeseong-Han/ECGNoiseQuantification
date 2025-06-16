@@ -19,7 +19,7 @@ Trained only on clean signals, the model reconstructs ECG scalograms and estimat
 
 ## 🖼️ Framework Overview
 
-![Framework Overview](figures/figure1.pdf)
+![Framework Overview](figures/figure1.png)
 
 ## 🧪 Example Usage
 
