@@ -1,7 +1,7 @@
 # Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection
 
 This repository contains the official implementation of  **"Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection"**  
-[Paper](https://arxiv.org/abs/2506.11815) • [Citation](# License and Citation)
+[Paper](https://arxiv.org/abs/2506.11815) • [Citation](#  License and Citation)
 
 ## 🔍 Overview
 
