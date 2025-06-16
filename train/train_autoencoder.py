@@ -27,7 +27,6 @@ def get_parser():
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--gradient_accumulation_steps', type=int, default=1)
     parser.add_argument('--lr_warmup_steps', type=int, default=5)
-    parser.add_argument('--num_train_timesteps', type=int, default=1000)
     parser.add_argument('--mixed_precision', type=str, default='no', choices=['no', 'fp16', 'bf16'])
     parser.add_argument('--num_processes', type=int, default=1,
                         help='Number of processes to launch for distributed training (used by notebook_launcher).')
@@ -36,7 +35,7 @@ def get_parser():
                         help="Minimum reference value for scalogram normalization.")
     parser.add_argument('--ref_max', type=float, default=-8.0,
                         help="Maximum reference value for scalogram normalization.")
-    parser.add_argument('--discretization', action='store_true')
+    parser.add_argument('--discretization', action='store_false')
     parser.add_argument('--noise_scheduler_type', type=str, default='ddpm', choices=['ddpm', 'ddim'])
     parser.add_argument('--seed', type=int, default=123)
 
