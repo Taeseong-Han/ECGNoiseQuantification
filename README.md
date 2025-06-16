@@ -37,7 +37,7 @@ Example:
 --ptbxl_raw_path ~/Database/physionet.org/files/ptb-xl/1.0.3
 ```
 
-📥 Download PTB-XL Dataset
+📥 **Download PTB-XL Dataset**
 
 You can download the raw PTB-XL dataset from PhysioNet:
 
