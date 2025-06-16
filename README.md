@@ -5,7 +5,7 @@ This repository contains the official implementation of
 [![arXiv](https://img.shields.io/badge/arXiv-2506.11815-b31b1b.svg)](https://arxiv.org/abs/2506.11815)
 
 
-## 🔍 Overview
+## 🔍 Introduction
 
 This study introduces a diffusion-based framework for ECG noise quantification using reconstruction-based anomaly detection.  The model is trained solely on clean ECG signals, learning to reconstruct clean representations from potentially noisy inputs. **Reconstruction errors, measured by Peak Signal-to-Noise Ratio (PSNR), serve as a proxy for noise levels** without requiring explicit noise labels during inference.
 
