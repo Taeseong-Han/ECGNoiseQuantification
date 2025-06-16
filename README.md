@@ -46,10 +46,10 @@ You can download the raw PTB-XL dataset from PhysioNet:
 ## 🏋️Train Model
 To train the autoencoder on the superlet-transformed PTB-XL dataset, run the following command from the project root:
 ```bash
-python -m train.train_autoencoder --discretization
+python -m train.train_autoencoder
 ```
 This will launch training with default settings using discretized superlet scalograms. You can customize training using additional arguments.
-This autoencoder acts as the feature compressor for the latent diffusion model and must be trained before running the diffusion-based training pipeline.
+This autoencoder acts as the feature compressor for the latent diffusion model and must be trained before training the latent diffusion model.
 
 > ⚠️ The training script structure is unified across this project.  
 > The same CLI pattern applies to training:
