@@ -43,6 +43,12 @@ You can download the raw PTB-XL dataset from PhysioNet:
 
 🔗 https://physionet.org/content/ptb-xl/1.0.3/
 
+## 🏋️Train Model
+To train the autoencoder on the superlet-transformed PTB-XL dataset, run the following command from the project root:
+```bash
+python -m train.train_autoencoder --discretization
+```
+
 
 ## 🧪 Example Usage
 
