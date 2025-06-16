@@ -25,7 +25,8 @@ Our final model achieves robust noise quantification with only **three reverse d
 To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
 
 ```bash
-python -m preprocessing.superlet_transform_ptbxl --ptbxl_raw_path [PTBXL_RAW_PATH]
+python -m preprocessing.superlet_transform_ptbxl \
+  --ptbxl_raw_path [PTBXL_RAW_PATH]
 ```
 
 Replace [PTBXL_RAW_PATH] with the full path to your downloaded PTB-XL dataset.
