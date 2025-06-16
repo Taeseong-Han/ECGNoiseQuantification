@@ -184,7 +184,7 @@ def build_ldm_unet():
     return UNetModel(
         in_channels=2,
         out_channels=2,
-        model_channels=32,
+        model_channels=64,
         down_block_types=(
             "ResnetDownsampleBlock2D",
             "AttnDownBlock2D",
@@ -204,7 +204,7 @@ def build_dm_unet():
     return UNetModel(
         in_channels=1,
         out_channels=1,
-        model_channels=32,
+        model_channels=64,
         down_block_types=(
             "ResnetDownsampleBlock2D",
             "ResnetDownsampleBlock2D",

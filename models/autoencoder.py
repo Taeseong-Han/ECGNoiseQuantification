@@ -96,7 +96,7 @@ class Autoencoder(nn.Module):
 
 def build_ae():
     return Autoencoder(
-        model_channels=32,
+        model_channels=64,
         down_block_types=(
             "DownEncoderBlock2D",
             "AttnDownEncoderBlock2D",
