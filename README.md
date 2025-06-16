@@ -54,9 +54,9 @@ This autoencoder acts as the feature compressor for the latent diffusion model a
 > ⚠️ The training script structure is unified across this project.  
 > The same CLI pattern applies to training:
 >
-> - `autoencoder → train_autoencoder.py`
-> - `latent diffusion model → train_latent_diffusion.py`
-> - `vanilla diffusion model → train_vanilla_diffusion.py`
+> - `autoencoder`
+> - `vanilla_diffusion`
+> - `latent_diffusion`
 >
 > Simply execute:
 >
