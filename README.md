@@ -17,6 +17,7 @@ By comparing the reconstruction error distributions of clean and noise-labeled E
 
 Our final model achieves robust noise quantification with only **three reverse diffusion steps**, enabling efficient and scalable deployment in real-world settings.
 
+### 🖼️ Framework Overview
 ![Framework Overview](figures/Framework_overview.jpg)
 
 ## 🧪 Example Usage
