@@ -1,5 +1,13 @@
 # Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection
 
+[![arXiv](https://img.shields.io/badge/arXiv-2506.11815-b31b1b.svg)](https://arxiv.org/abs/2506.11815)
+
+This repository contains the official implementation of  
+**"Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection"**  
+Han *et al.*, 2025 (arXiv:2506.11815)
+
+## 🧪 Example Usage
+
 ## 📄Citation
 
 The software is licensed under the Apache License 2.0.  
