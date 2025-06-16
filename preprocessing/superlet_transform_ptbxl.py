@@ -1,4 +1,3 @@
-import os
 import wfdb
 import argparse
 
