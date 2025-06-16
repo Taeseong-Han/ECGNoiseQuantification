@@ -3,7 +3,6 @@ import re
 import numpy as np
 import pandas as pd
 
-from typing import List
 from pathlib import Path
 
 
@@ -82,7 +81,7 @@ def ptbxl_label_parser(high_res: bool = True) -> None:
 
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-    Y = pd.read_csv(PROJECT_ROOT / 'data/ptbxl_database.csv')
+    Y = pd.read_csv(PROJECT_ROOT / 'data/database/ptbxl_database.csv')
     filename_col = 'filename_hr' if high_res else 'filename_lr'
 
     columns = [filename_col, 'scp_codes', 'baseline_drift', 'static_noise',
@@ -111,7 +110,7 @@ def ptbxl_label_parser(high_res: bool = True) -> None:
         ]
 
     df.dropna(inplace=True)
-    df.to_csv(PROJECT_ROOT / 'data/ptbxl_label_dropna.csv', index=False)
+    df.to_csv(PROJECT_ROOT / 'data/database/ptbxl_label_dropna.csv', index=False)
 
 
 if __name__ == "__main__":
