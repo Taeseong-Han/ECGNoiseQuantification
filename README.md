@@ -1,14 +1,29 @@
 # Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection
 
-[![arXiv](https://img.shields.io/badge/arXiv-2506.11815-b31b1b.svg)](https://arxiv.org/abs/2506.11815)
+Paper: [arXiv:2506.11815](https://arxiv.org/abs/2506.11815)
+
+## 🔍 Overview
 
 This repository contains the official implementation of  
 **"Diffusion-Based Electrocardiography Noise Quantification via Anomaly Detection"**  
-Han *et al.*, 2025 (arXiv:2506.11815)
+Han *et al.*, arXiv:2506.11815
+
+We propose a label-free, reconstruction-based framework that quantifies ECG noise using diffusion models.  
+Trained only on clean signals, the model reconstructs ECG scalograms and estimates noise severity via reconstruction errors, measured by PSNR and Wasserstein-1 distance ($W_1$).
+
+**Key features:**
+- ✅ Label-free anomaly detection without synthetic noise
+- 🚀 Lightweight inference (3-step DDIM)
+- 📊 Superior $W_1$ performance across PTB-XL, BUT QDB, CinC, NSTDB
+- 🧠 Real-world clinical applications: arrhythmia detection, long-term ECG monitoring
+
+## 🖼️ Framework Overview
+
+![Framework Overview](figures/figure1.png)
 
 ## 🧪 Example Usage
 
-## 📄Citation
+## 📄License and Citation
 
 The software is licensed under the Apache License 2.0.  
 Please cite the following paper if you use this code:
