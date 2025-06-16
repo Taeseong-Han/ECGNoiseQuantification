@@ -4,8 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from pathlib import Path
-from models.unet import build_ldm_unet
-from models.autoencoder import build_ae
+from .unet import build_ldm_unet
+from .autoencoder import build_ae
 from diffusers import DDPMScheduler, DDIMScheduler
 
 
