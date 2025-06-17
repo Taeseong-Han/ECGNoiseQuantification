@@ -76,6 +76,9 @@ You can download the pretrained latent diffusion model from 🤗 Hugging Face:
 
 ### 💻 Inference Example
 To run ECG noise quantification, see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code snippet:
+>The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for reconstruction-based anomaly detection.
+>The output includes segment-level original and denoised scalograms, along with the corresponding PSNR (Peak Signal-to-Noise Ratio) values for each segment. A higher PSNR indicates better signal quality (i.e., lower noise level).
+
 ```python
 from utils.inference import ecg_noise_quantification
 
