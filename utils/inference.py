@@ -23,33 +23,62 @@ def compute_psnr_matrix(
         clean: np.ndarray,
         rem: int,
         sampling_freq: int,
-        segment_seconds: int = 10
+        n_partitions: int,
+        segment_seconds: int = 10,
+
 ) -> np.ndarray:
     """
-    Compute PSNR matrix for all leads and segments, adjusting the last segment by actual length.
-    orig, clean: arrays of shape (leads, segments, H, W)
-    rem: remainder timepoints of the last segment before padding
-    sampling_freq: sampling frequency
-    segment_seconds: segment duration in seconds
+    Compute PSNR matrix for all leads and segments, dividing each segment into
+    n_partitions along the time dimension. For the last segment, only partitions
+    containing valid data (based on remainder) are included.
+
+    Args:
+        orig, clean: Arrays of shape (leads, segments, H, W).
+        rem: Remainder timepoints of the last segment before padding.
+        sampling_freq: Sampling frequency in Hz.
+        segment_seconds: Segment duration in seconds (default: 10).
+        n_partitions: Number of equal-width partitions per segment (default: 1).
+
+    Returns:
+        psnr: Array of shape (leads, total_valid_partitions), where total_valid_partitions
+              is the number of partitions containing valid data across all segments.
     """
     leads, segments, H, W = orig.shape
-    # Full-segment PSNR
-    diff = orig - clean
-    mse = np.mean(diff ** 2, axis=(2, 3))  # shape: (leads, segments)
-    psnr = 10 * np.log10((255 ** 2) / mse)
-    psnr[mse == 0] = np.inf
+    seg_len = sampling_freq * segment_seconds
+    part_width = W // n_partitions  # Width of each partition
 
-    # Adjust last segment if remainder exists
-    if rem:
-        idx = segments - 1
-        # compute width cut for last valid portion
-        valid_ratio = rem / (sampling_freq * segment_seconds)
-        width_cut = int(W * valid_ratio)
-        o_last = orig[:, idx, :, -width_cut:]
-        c_last = clean[:, idx, :, -width_cut:]
-        mse_last = np.mean((o_last - c_last) ** 2, axis=(1, 2))
-        psnr[:, idx] = 10 * np.log10((255 ** 2) / mse_last)
-    return psnr
+    psnr_list = []  # Collect PSNR values for valid partitions
+
+    for seg in range(segments):
+        # Determine valid data range for the segment
+        if seg == segments - 1 and rem:
+            valid_ratio = rem / seg_len
+            width_cut = int(W * valid_ratio)
+            valid_start = W - width_cut
+        else:
+            valid_start = 0
+
+        # Process each partition
+        for p in range(n_partitions):
+            start = valid_start + p * part_width
+            end = start + part_width if p < n_partitions - 1 else W
+            end = min(end, W)  # Ensure end does not exceed W
+
+            # Skip partitions with no valid data
+            if start >= W or end <= valid_start:
+                continue
+
+            # Compute PSNR for the partition
+            section_orig = orig[:, seg, :, start:end]
+            section_clean = clean[:, seg, :, start:end]
+            diff = section_orig - section_clean
+            mse = np.mean(diff ** 2, axis=(1, 2))  # Shape: (leads,)
+            psnr = 10 * np.log10((255 ** 2) / mse)
+            psnr[mse == 0] = np.inf
+            psnr_list.append(psnr)
+
+    # Convert to array with shape (leads, total_valid_partitions)
+    return np.stack(psnr_list, axis=1)
 
 
 def segment_ecg(ecg: np.ndarray, sampling_freq: int, segment_seconds: int = 10) -> (np.ndarray, int):
@@ -92,6 +121,7 @@ def ecg_noise_quantification(
         ecg: np.ndarray,
         sampling_freq: int,
         checkpoint_path: Union[str, Path],
+        n_partitions: int = 1,
         batch_size: int = 64,
         diffusion_timestep: Union[int, torch.Tensor] = 30,
         noise_scheduler_type: str = 'ddim',
@@ -134,6 +164,6 @@ def ecg_noise_quantification(
     clean = clean_img.reshape(segments, leads, H, W).transpose(1, 0, 2, 3)
 
     # Compute PSNR matrix
-    psnr_matrix = compute_psnr_matrix(orig, clean, rem, sampling_freq)
+    psnr_matrix = compute_psnr_matrix(orig, clean, rem, sampling_freq, n_partitions)
 
     return Output(original_image=orig, cleaned_image=clean, psnr=psnr_matrix)
