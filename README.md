@@ -32,13 +32,13 @@ scalable deployment in real-world settings.
 
 ## 🧪 Example Usage
 
-### 🔗 Pretrained Model
+#### 🔗 Pretrained Model
 
 You can download the pretrained latent diffusion model from 🤗 Hugging Face:
 
 👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
 
-### 💻 Inference Example
+#### 💻 Inference Example
 
 To run ECG noise quantification,
 see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
