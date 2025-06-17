@@ -29,7 +29,6 @@ scalable deployment in real-world settings.
 ![Framework Overview](figures/Framework_overview.jpg)
 
 <br>
-<br>
 
 ## 🧪 Example Usage
 
@@ -104,7 +103,6 @@ You can download the raw PTB-XL dataset from PhysioNet:
 
 🔗 https://physionet.org/content/ptb-xl/1.0.3/
 
-<br>
 <br>
 
 ## 🏋️Train Model
