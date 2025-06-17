@@ -38,6 +38,7 @@ You can download the pretrained latent diffusion model from 🤗 Hugging Face:
 #### 💻 Inference Example
 Higher PSNR values reflect better signal quality, corresponding to lower noise levels.
 In practice, a threshold around 24 PSNR effectively separates severely degraded ECG segments from acceptable ones.
+
 see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
 snippet:
 > The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
