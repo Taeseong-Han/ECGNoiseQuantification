@@ -70,6 +70,27 @@ This autoencoder acts as the feature compressor for the latent diffusion model a
 
 ## 🧪 Example Usage
 
+### 🔗 Pretrained Model
+You can download the pretrained latent diffusion model from 🤗 Hugging Face:
+👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
+
+### 💻 Inference Example
+To run ECG noise quantification, see demo.ipynb or use the following code snippet:
+```python
+from utils.inference import ecg_noise_quantification
+
+checkpoint_path = "[YOUR_PATH]/pretrained_ldm.pth"
+
+output = ecg_noise_quantification(
+    ecg=ecg,                      # numpy array of shape (leads, timepoints)
+    sampling_freq=500,           # sampling frequency in Hz
+    checkpoint_path=checkpoint_path,
+)
+output.original_image: np.ndarray  # shape: (leads, segments, H, W)
+output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
+output.psnr: np.ndarray  # shape: (leads, segments)
+```
+
 ## 📄 License and Citation
 
 The software is licensed under the MIT License 2.0.  
