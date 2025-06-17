@@ -41,12 +41,6 @@ In practice, a threshold around 24 PSNR effectively separates severely degraded 
 
 see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
 snippet:
-> The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
-> representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
-> reconstruction-based anomaly detection.
->
->The output includes segment-level original and denoised scalograms, along with the corresponding PSNR values for each segment.
-> 
 ```python
 from utils.inference import ecg_noise_quantification
 
@@ -62,6 +56,12 @@ output.original_image: np.ndarray  # shape: (leads, segments, H, W)
 output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
 output.psnr: np.ndarray  # shape: (leads, segments)
 ```
+> The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
+> representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
+> reconstruction-based anomaly detection.
+>
+>The output includes segment-level original and denoised scalograms, along with the corresponding PSNR values for each segment.
+> 
 
 <br>
 <br>
