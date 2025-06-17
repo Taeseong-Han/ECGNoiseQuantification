@@ -26,6 +26,9 @@ scalable deployment in real-world settings.
 
 ![Framework Overview](figures/Framework_overview.jpg)
 
+<br>
+<br>
+
 ## 🔄 Superlet Transform on PTB-XL Data
 
 To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
@@ -48,6 +51,9 @@ Example:
 You can download the raw PTB-XL dataset from PhysioNet:
 
 🔗 https://physionet.org/content/ptb-xl/1.0.3/
+
+<br>
+<br>
 
 ## 🏋️Train Model
 
@@ -78,8 +84,10 @@ latent diffusion model.
 > ```bash
 > python -m train.[script_name] --help
 > ```
+
 <br>
 <br>
+
 ## 🧪 Example Usage
 
 ### 🔗 Pretrained Model
@@ -115,6 +123,9 @@ output.original_image: np.ndarray  # shape: (leads, segments, H, W)
 output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
 output.psnr: np.ndarray  # shape: (leads, segments)
 ```
+
+<br>
+<br>
 
 ## 📄 License and Citation
 
