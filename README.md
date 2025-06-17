@@ -22,8 +22,6 @@ By comparing the reconstruction error distributions of clean and noise-labeled E
 Our final model achieves robust noise quantification with only **three reverse diffusion steps**, enabling efficient and
 scalable deployment in real-world settings.
 
-<br>
-
 #### 🖼️ Framework Overview
 
 ![Framework Overview](figures/Framework_overview.jpg)
@@ -74,8 +72,8 @@ output.psnr: np.ndarray  # shape: (leads, segments)
 
 The following sections provide instructions for:
 
-- Transforming raw PTB-XL ECG data using superlet transform  
-- Training the autoencoder used for latent diffusion  
+- Transforming raw PTB-XL ECG data using superlet transform
+- Training the autoencoder used for latent diffusion
 - Running full training pipelines for diffusion models
 
 ---
@@ -105,7 +103,7 @@ You can download the raw PTB-XL dataset from PhysioNet:
 
 <br>
 
-## 🏋️Train Model
+### 🏋️Train Model
 
 To train the autoencoder on the superlet-transformed PTB-XL dataset, run the following command from the project root:
 
