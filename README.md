@@ -78,7 +78,8 @@ latent diffusion model.
 > ```bash
 > python -m train.[script_name] --help
 > ```
-\n\n
+<br>
+<br>
 ## 🧪 Example Usage
 
 ### 🔗 Pretrained Model
