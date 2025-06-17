@@ -71,6 +71,16 @@ output.psnr: np.ndarray  # shape: (leads, segments)
 <br>
 <br>
 
+## 🧬 Reproducibility: Data Preprocessing and Training
+
+The following sections provide instructions for:
+
+- Transforming raw PTB-XL ECG data using superlet transform  
+- Training the autoencoder used for latent diffusion  
+- Running full training pipelines for diffusion models
+
+---
+
 ## 🔄 Superlet Transform on PTB-XL Data
 
 To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
