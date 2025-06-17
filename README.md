@@ -72,7 +72,7 @@ This autoencoder acts as the feature compressor for the latent diffusion model a
 
 ## 📄 License and Citation
 
-The software is licensed under the Apache License 2.0.  
+The software is licensed under the MIT License 2.0.  
 Please cite the following paper if you use this code:
 
 ```bibtex
