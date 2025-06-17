@@ -8,8 +8,7 @@ This repository contains the official implementation of
 
 This study introduces a diffusion-based framework for ECG noise quantification using reconstruction-based anomaly
 detection. The model is trained solely on clean ECG signals, learning to reconstruct clean representations from
-potentially noisy inputs. **Reconstruction errors, measured by Peak Signal-to-Noise Ratio (PSNR), serve as a proxy for
-noise levels** without requiring explicit noise labels during inference.
+potentially noisy inputs. **Reconstruction errors serve as a proxy for noise levels** without requiring explicit noise labels during inference.
 
 To address label inconsistencies and improve generalizability, we adopt a **distributional evaluation** strategy using
 the **Wasserstein-1 distance ($W_1$)**.  
@@ -37,18 +36,16 @@ You can download the pretrained latent diffusion model from 🤗 Hugging Face:
 👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
 
 #### 💻 Inference Example
-
-To run ECG noise quantification,
+Higher PSNR values reflect better signal quality, corresponding to lower noise levels.
+In practice, a threshold around 24 PSNR effectively separates severely degraded ECG segments from acceptable ones.
 see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
 snippet:
 > The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
 > representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
 > reconstruction-based anomaly detection.
 >
->The output includes segment-level original and denoised scalograms, along with the corresponding PSNR (Peak
-> Signal-to-Noise Ratio) values for each segment. A higher PSNR indicates better signal quality (i.e., lower noise
-> level).
-
+>The output includes segment-level original and denoised scalograms, along with the corresponding PSNR values for each segment.
+> 
 ```python
 from utils.inference import ecg_noise_quantification
 
