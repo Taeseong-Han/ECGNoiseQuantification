@@ -75,7 +75,7 @@ You can download the pretrained latent diffusion model from 🤗 Hugging Face:
 👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
 
 ### 💻 Inference Example
-To run ECG noise quantification, see demo.ipynb or use the following code snippet:
+To run ECG noise quantification, see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code snippet:
 ```python
 from utils.inference import ecg_noise_quantification
 
@@ -86,6 +86,7 @@ output = ecg_noise_quantification(
     sampling_freq=500,           # sampling frequency in Hz
     checkpoint_path=checkpoint_path,
 )
+
 output.original_image: np.ndarray  # shape: (leads, segments, H, W)
 output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
 output.psnr: np.ndarray  # shape: (leads, segments)
