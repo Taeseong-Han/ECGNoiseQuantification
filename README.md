@@ -80,7 +80,7 @@ The following sections provide instructions for:
 
 ---
 
-## 🔄 Superlet Transform on PTB-XL Data
+### 🔄 Superlet Transform on PTB-XL Data
 
 To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
 
