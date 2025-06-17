@@ -31,6 +31,46 @@ scalable deployment in real-world settings.
 <br>
 <br>
 
+## 🧪 Example Usage
+
+### 🔗 Pretrained Model
+
+You can download the pretrained latent diffusion model from 🤗 Hugging Face:
+
+👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
+
+### 💻 Inference Example
+
+To run ECG noise quantification,
+see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
+snippet:
+> The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
+> representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
+> reconstruction-based anomaly detection.
+>
+>The output includes segment-level original and denoised scalograms, along with the corresponding PSNR (Peak
+> Signal-to-Noise Ratio) values for each segment. A higher PSNR indicates better signal quality (i.e., lower noise
+> level).
+
+```python
+from utils.inference import ecg_noise_quantification
+
+checkpoint_path = "[YOUR_PATH]/pretrained_ldm.pth"
+
+output = ecg_noise_quantification(
+    ecg=ecg,  # numpy array of shape (leads, timepoints)
+    sampling_freq=500,  # sampling frequency in Hz
+    checkpoint_path=checkpoint_path,
+)
+
+output.original_image: np.ndarray  # shape: (leads, segments, H, W)
+output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
+output.psnr: np.ndarray  # shape: (leads, segments)
+```
+
+<br>
+<br>
+
 ## 🔄 Superlet Transform on PTB-XL Data
 
 To convert raw PTB-XL ECG recordings into superlet scalograms, run the following command from the project root:
@@ -86,45 +126,6 @@ latent diffusion model.
 > ```bash
 > python -m train.[script_name] --help
 > ```
-
-<br>
-<br>
-
-## 🧪 Example Usage
-
-### 🔗 Pretrained Model
-
-You can download the pretrained latent diffusion model from 🤗 Hugging Face:
-
-👉 [Download pretrained model](https://huggingface.co/Taeseong-Han/ECGNoiseQuantification/blob/main/pretrained_ldm.pth)
-
-### 💻 Inference Example
-
-To run ECG noise quantification,
-see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/main/demo.ipynb) or use the following code
-snippet:
-> The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
-> representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
-> reconstruction-based anomaly detection.
->
->The output includes segment-level original and denoised scalograms, along with the corresponding PSNR (Peak
-> Signal-to-Noise Ratio) values for each segment. A higher PSNR indicates better signal quality (i.e., lower noise level).
-
-```python
-from utils.inference import ecg_noise_quantification
-
-checkpoint_path = "[YOUR_PATH]/pretrained_ldm.pth"
-
-output = ecg_noise_quantification(
-    ecg=ecg,  # numpy array of shape (leads, timepoints)
-    sampling_freq=500,  # sampling frequency in Hz
-    checkpoint_path=checkpoint_path,
-)
-
-output.original_image: np.ndarray  # shape: (leads, segments, H, W)
-output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
-output.psnr: np.ndarray  # shape: (leads, segments)
-```
 
 <br>
 <br>
