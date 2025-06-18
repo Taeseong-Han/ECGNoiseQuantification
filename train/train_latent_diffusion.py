@@ -17,7 +17,7 @@ def get_parser():
                         default=Path(__file__).resolve().parents[1] / "output/logs")
     parser.add_argument('--superlet_dir', type=Path,
                         default=Path(__file__).resolve().parents[1] / "data/database/ptbxl_superlet32")
-    parser.add_argument('--model_path', type=Path,
+    parser.add_argument('--save_path', type=Path,
                         default=Path(__file__).resolve().parents[1] / "output/ldm_model")
     parser.add_argument('--ae_checkpoint_path', type=Path,
                         default=Path(__file__).resolve().parents[1] / "output/ae_model/ema_100.pth",
