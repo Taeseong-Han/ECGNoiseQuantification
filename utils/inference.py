@@ -13,9 +13,9 @@ from utils.scalogram_utils import scalogram_to_model_input, model_output_to_imag
 
 @dataclass
 class Output:
-    original_image: np.ndarray  # shape: (leads, segments, H, W)
-    cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
     psnr: np.ndarray  # shape: (leads, segments)
+    original_image: Union[np.ndarray, None]  # shape: (leads, segments, H, W)
+    cleaned_image: Union[np.ndarray, None]  # shape: (leads, segments, H, W)
 
 
 def compute_psnr_matrix(
@@ -104,6 +104,10 @@ def segment_ecg(ecg: np.ndarray, sampling_freq: int, segment_seconds: int = 10) 
     return np.stack(segs, axis=0), rem
 
 
+def adjust_batch_size(batch_size, leads):
+    return round(batch_size / leads) * leads
+
+
 def load_diffusion_model(
         checkpoint_path: Union[str, Path],
         noise_scheduler_type: str,
@@ -118,52 +122,103 @@ def load_diffusion_model(
 
 
 def ecg_noise_quantification(
-        ecg: np.ndarray,
-        sampling_freq: int,
-        checkpoint_path: Union[str, Path],
-        n_partitions: int = 1,
-        batch_size: int = 64,
-        diffusion_timestep: Union[int, torch.Tensor] = 30,
-        noise_scheduler_type: str = 'ddim',
-        discretize: bool = True,
-        use_ldm: bool = True,
-        step_interval: int = 10,
-        seed: int = 123,
+    ecg: np.ndarray,
+    sampling_freq: int,
+    checkpoint_path: Union[str, Path],
+    n_partitions: int = 1,
+    batch_size: int = 64,
+    diffusion_timestep: Union[int, torch.Tensor] = 30,
+    noise_scheduler_type: str = 'ddim',
+    discretize: bool = True,
+    use_ldm: bool = True,
+    step_interval: int = 10,
+    seed: int = 123,
+    return_images: bool = False,
 ) -> Output:
+    """
+    Quantify noise in an ECG signal using a diffusion-based anomaly detection framework.
+
+    Args:
+        ecg: Raw ECG signal array, shape (channels, samples) or (samples,).
+        sampling_freq: Sampling frequency in Hz.
+        checkpoint_path: Path to model weights.
+        n_partitions: Number of partitions per segment for PSNR calculation.
+        batch_size: Maximum number of scalograms per batch.
+        diffusion_timestep: Number of reverse diffusion steps or tensor of timesteps.
+        noise_scheduler_type: Scheduler name for diffusion ('ddpm' or 'ddim').
+        discretize: Whether to discretize model output into image form.
+        use_ldm: If True, use LatentDiffusionModel; otherwise use vanilla DiffusionModel.
+        step_interval: Step interval for generating denoised samples.
+        seed: Random seed for reproducibility.
+        return_images: If True, returns original and cleaned images.
+
+    Returns:
+        Output dataclass with fields:
+            - psnr: PSNR matrix, shape (leads, total_valid_partitions)
+            - original_image: Optional array of original scalogram images
+            - cleaned_image: Optional array of cleaned scalogram images
+    """
+    # Reproducibility and device setup
     torch.manual_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Segment and prepare input
-    ecg_segs, rem = segment_ecg(ecg, sampling_freq)
-    segments, leads, _ = ecg_segs.shape
-    batch_ecg = ecg_segs.reshape(-1, ecg_segs.shape[-1])
-
-    scalograms = compute_superlet_scalogram(batch_ecg, sampling_freq)
-    model_in = scalogram_to_model_input(scalograms)
-    tensor_in = torch.FloatTensor(model_in).unsqueeze(1).to(device)
-
+    # Load model
     model = load_diffusion_model(checkpoint_path, noise_scheduler_type, use_ldm, device)
     if isinstance(diffusion_timestep, int):
-        diffusion_timestep = torch.IntTensor([diffusion_timestep]).to(device)
+        diffusion_timestep = torch.tensor([diffusion_timestep], dtype=torch.int32, device=device)
 
-    # Batched denoising to avoid OOM
-    cleaned_batches: List[torch.Tensor] = []
-    for start in range(0, tensor_in.size(0), batch_size):
-        end = start + batch_size
-        batch = tensor_in[start:end]
-        cleaned_batch = model.generate_denoised_sample(batch, diffusion_timestep, step_interval)
-        cleaned_batches.append(cleaned_batch.cpu())
-    cleaned = torch.cat(cleaned_batches, dim=0)
+    # Segment ECG into fixed-length windows
+    ecg_segs, rem = segment_ecg(ecg, sampling_freq)
+    segments, leads, _ = ecg_segs.shape
+    flattened_ecg = ecg_segs.reshape(-1, ecg_segs.shape[-1])
 
-    orig_img = model_output_to_image(tensor_in.squeeze(1).cpu().numpy(), discretize)
-    clean_img = model_output_to_image(cleaned.squeeze(1).cpu().numpy(), discretize)
+    # Adjust batch size to be multiple of leads
+    total_samples = flattened_ecg.shape[0]
+    batch_size = min(((batch_size + leads - 1) // leads) * leads, total_samples)
 
-    # reshape to (leads, segments, H, W)
-    H, W = orig_img.shape[1], orig_img.shape[2]
-    orig = orig_img.reshape(segments, leads, H, W).transpose(1, 0, 2, 3)
-    clean = clean_img.reshape(segments, leads, H, W).transpose(1, 0, 2, 3)
+    psnr_batches = []
+    orig_images, clean_images = [], []
 
-    # Compute PSNR matrix
-    psnr_matrix = compute_psnr_matrix(orig, clean, rem, sampling_freq, n_partitions)
+    # Process in batches
+    for idx in range(0, total_samples, batch_size):
+        batch = flattened_ecg[idx: idx + batch_size]
 
-    return Output(original_image=orig, cleaned_image=clean, psnr=psnr_matrix)
+        # Compute input scalograms and model tensor
+        scalograms = compute_superlet_scalogram(batch, sampling_freq)
+        model_input = torch.from_numpy(
+            scalogram_to_model_input(scalograms)
+        ).unsqueeze(1).float().to(device)
+
+        # Generate denoised output
+        denoised = model.generate_denoised_sample(
+            model_input, diffusion_timestep, step_interval
+        )
+
+        # Convert tensors back to numpy images
+        orig_img = model_output_to_image(model_input.squeeze(1).cpu().numpy(), discretize)
+        clean_img = model_output_to_image(denoised.squeeze(1).cpu().numpy(), discretize)
+
+        # Reshape to (leads, segments_in_batch, H, W)
+        batch_segments = orig_img.shape[0] // leads
+        H, W = orig_img.shape[1], orig_img.shape[2]
+        orig = orig_img.reshape(batch_segments, leads, H, W).transpose(1, 0, 2, 3)
+        clean = clean_img.reshape(batch_segments, leads, H, W).transpose(1, 0, 2, 3)
+
+        # Compute PSNR for this batch
+        is_last_batch = (idx + batch_size) >= total_samples
+        rem_for_last = rem if is_last_batch else 0
+        psnr_matrix = compute_psnr_matrix(orig, clean, rem_for_last, sampling_freq, n_partitions)
+        psnr_batches.append(psnr_matrix)
+
+        # Optionally collect images
+        if return_images:
+            orig_images.append(orig)
+            clean_images.append(clean)
+
+    # Concatenate results
+    psnr = np.concatenate(psnr_batches, axis=1)
+    orig_out = np.concatenate(orig_images, axis=1) if return_images else None
+    clean_out = np.concatenate(clean_images, axis=1) if return_images else None
+
+    return Output(psnr=psnr, original_image=orig_out, cleaned_image=clean_out)
+
