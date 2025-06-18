@@ -59,7 +59,7 @@ def train_loop(
             - mixed_precision
             - gradient_accumulation_steps
             - log_dir
-            - model_path
+            - save_path
             - num_epochs
             - ema_rate
         model: Model to train.
@@ -77,11 +77,11 @@ def train_loop(
     )
 
     # Create directories
-    Path(args.model_path).mkdir(parents=True, exist_ok=True)
+    Path(args.save_path).mkdir(parents=True, exist_ok=True)
     Path(args.log_dir).mkdir(parents=True, exist_ok=True)
 
     # Initialize trackers
-    accelerator.init_trackers(Path(args.model_path).name)
+    accelerator.init_trackers(Path(args.save_path).name)
 
     # Prepare for distributed/progress
     model, optimizer, dataloader, lr_scheduler = accelerator.prepare(
@@ -129,4 +129,4 @@ def train_loop(
 
         # Save checkpoints periodically
         if epoch % save_interval == 0 or epoch == args.num_epochs:
-            save_checkpoint(model, ema_params, Path(args.model_path), epoch)
+            save_checkpoint(model, ema_params, Path(args.save_path), epoch)
