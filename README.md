@@ -50,11 +50,12 @@ output = ecg_noise_quantification(
     ecg=ecg,  # numpy array of shape (leads, timepoints)
     sampling_freq=500,  # sampling frequency in Hz
     checkpoint_path=checkpoint_path,
+    return_images=True,
 )
 
+output.psnr: np.ndarray  # shape: (leads, segments)
 output.original_image: np.ndarray  # shape: (leads, segments, H, W)
 output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
-output.psnr: np.ndarray  # shape: (leads, segments)
 ```
 > The input ECG is automatically segmented into 10-second windows, each of which is converted into a time-frequency
 > representation via superlet transform. These scalograms are then fed into the pretrained diffusion model for
