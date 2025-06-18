@@ -2,7 +2,7 @@ import torch
 import argparse
 
 from pathlib import Path
-from utils.train_loop import train_loop
+from train.train_utils import train_loop
 from torch.utils.data import DataLoader
 from accelerate import notebook_launcher
 from data.ptbxl_dataset import PTBXLDataset
