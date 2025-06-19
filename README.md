@@ -18,7 +18,7 @@ Our optimized model achieves robust noise quantification with only **three rever
 
 ![External validation](figures/external_validation.jpg)
 
-**Figure** demonstrates the practical utility of PSNR-based segment analysis and $W_1$-based evaluation (leveraging PSNR distributions):
+**Figure** demonstrates the practical utility of PSNR-based segment analysis and Wasserstein-1 distance (**$W_1$**)-based evaluation (leveraging PSNR distributions):
 
 - **(a)** Examples from the BUT QDB dataset highlight discrepancies where a segment labeled as "Clean" by humans exhibited a lower PSNR (higher noise) compared to another segment labeled "Moderate Noise." Specifically, noise-labeled samples with high PSNR appeared visually clean, whereas clean-labeled samples with low PSNR clearly exhibited noise artifacts.
 
