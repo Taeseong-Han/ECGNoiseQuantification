@@ -6,24 +6,31 @@ This repository contains the official implementation of
 
 ## 🔍 Introduction
 
-This study introduces a diffusion-based framework for ECG noise quantification using reconstruction-based anomaly
-detection. The model is trained solely on clean ECG signals, learning to reconstruct clean representations from
-potentially noisy inputs. **Reconstruction errors serve as a proxy for noise levels** without requiring explicit noise labels during inference.
+This study introduces a diffusion-based framework for ECG noise quantification via reconstruction-based anomaly detection. The model learns to reconstruct clean ECG signals from potentially noisy inputs, with **reconstruction errors serving as proxies for noise levels**. This approach eliminates the need for explicit noise labels during inference.
 
-To address label inconsistencies and improve generalizability, we adopt a **distributional evaluation** strategy using
-the **Wasserstein-1 distance ($W_1$)**.  
-By comparing the reconstruction error distributions of clean and noise-labeled ECGs, the model can:
+We utilize two complementary metrics tailored for specific evaluation purposes:
 
-- Identify optimal architectures and sampling configurations
-- Detect mislabeled samples
-- Refine the training dataset through low-error selection
+- **Noise Quantification**: Peak Signal-to-Noise Ratio (**PSNR**), a robust metric for quantifying distortion in the time-frequency domain, is employed. PSNR is inversely proportional to noise levels:
+  - **Lower PSNR** 📉💥 indicates **higher noise**.
+  - **Higher PSNR** indicates **better signal quality**.
 
-Our final model achieves robust noise quantification with only **three reverse diffusion steps**, enabling efficient and
-scalable deployment in real-world settings.
+- **Model Performance Evaluation**: Wasserstein-1 distance (**$W_1$**) compares reconstruction error distributions between clean and noise-labeled ECG segments. Unlike human-labeled classifications, which can be inconsistent, $W_1$ facilitates:
+  - Optimal architecture and sampling configuration selection.
+  - Identification and correction of mislabeled samples.
+  - Iterative refinement of the training dataset by filtering segments with low reconstruction errors.
 
-#### 🖼️ Framework Overview
+Our optimized model achieves robust noise quantification with only **three reverse diffusion steps**, ensuring efficient and scalable real-world applicability.
 
-![Framework Overview](figures/Framework_overview.jpg)
+### 🖼️ Limitations of Human Labels in ECG Noise Assessment
+
+![External validation](figures/external_validation.jpg)
+
+**Figure** demonstrates the practical utility of PSNR-based segment analysis and PSNR distribution:
+
+- **(a)** Examples from the **BUT QDB** dataset highlight discrepancies where a segment labeled as "Clean" by humans exhibited a lower PSNR (higher noise) compared to another segment labeled "Moderate Noise."
+
+- **(b)** Analysis of data from the **CinC Challenge 2011** dataset revealed significant overlap in PSNR distributions between human-labeled clean and noisy segments. Further visual inspection (Figure (b)) confirmed these overlapping segments indeed exhibited similar noise characteristics, underscoring the limitations of human annotations.
+
 
 <br>
 
@@ -76,6 +83,10 @@ The following sections provide instructions for:
 - Running full training pipelines for diffusion models
 
 ---
+
+#### 🖼️ Framework Overview
+
+![Framework Overview](figures/Framework_overview.jpg)
 
 ### 🔄 Superlet Transform on PTB-XL Data
 
