@@ -13,7 +13,6 @@ from diffusers.optimization import get_cosine_schedule_with_warmup
 def get_parser() -> argparse.ArgumentParser:
     """
     Create argument parser for training Diffusion Model on PTB-XL Superlet Dataset.
-    Organizes arguments into logical groups for clarity.
     """
     parser = argparse.ArgumentParser(
         description="Train Diffusion Model on PTB-XL Superlet Dataset"

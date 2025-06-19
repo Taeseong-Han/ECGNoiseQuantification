@@ -13,7 +13,6 @@ from diffusers.optimization import get_cosine_schedule_with_warmup
 def get_parser() -> argparse.ArgumentParser:
     """
     Create argument parser for training Latent Diffusion Autoencoder on PTB-XL Superlet Dataset.
-    Organizes arguments into logical groups for clarity.
     """
     parser = argparse.ArgumentParser(
         description="Train Latent Diffusion Autoencoder on PTB-XL Superlet Dataset"
