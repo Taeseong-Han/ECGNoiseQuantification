@@ -71,9 +71,9 @@ if __name__ == "__main__":
         help="Keyword to filter result files by name"
     )
     parser.add_argument(
-        "--directory", type=Path, default=Path("./results"),
+        "--output_dir", type=Path, default=Path("./results"),
         help="Directory containing the result CSV files"
     )
     args = parser.parse_args()
 
-    evaluate_models(keyword=args.keyword, directory=args.directory)
+    evaluate_models(keyword=args.keyword, directory=args.output_dir)

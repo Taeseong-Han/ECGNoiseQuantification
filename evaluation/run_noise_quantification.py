@@ -23,6 +23,12 @@ def get_parser() -> argparse.ArgumentParser:
         default=Path(__file__).resolve().parents[1] / "data/database/ptbxl_superlet32",
         help="Directory containing precomputed superlet scalograms."
     )
+    parser.add_argument(
+        '--output_dir',
+        type=Path,
+        default=Path(__file__).resolve().parents[1] / "results",
+        help="Directory where CSV results will be saved."
+    )
 
     # Diffusion sampling parameters
     parser.add_argument(
@@ -106,6 +112,7 @@ def main() -> None:
         ref_min=args.ref_min,
         ref_max=args.ref_max,
         superlet_dir=args.superlet_dir,
+        output_dir=args.output_dir,
         batch_size=args.batch_size,
         diffusion_timestep=args.timestep,
         noise_scheduler_type=args.noise_scheduler_type,

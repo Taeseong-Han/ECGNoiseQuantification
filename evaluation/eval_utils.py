@@ -38,6 +38,7 @@ def noise_quantification_ptbxl(
         ref_min: float,
         ref_max: float,
         superlet_dir: Union[str, Path],
+        output_dir: Union[str, Path],
         batch_size: int,
         diffusion_timestep: Union[int, torch.Tensor],
         noise_scheduler_type: str,
@@ -92,7 +93,7 @@ def noise_quantification_ptbxl(
                  'burst_noise', 'electrodes_problems', 'clean', 'strat_fold']
 
     # Define output directory and file naming
-    out_dir = Path('results')
+    out_dir = Path(output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     tag = 'ldm' if use_ldm else 'dm'
     scheduler = f"{noise_scheduler_type}-{step_interval}" if noise_scheduler_type != 'ddpm' else noise_scheduler_type
