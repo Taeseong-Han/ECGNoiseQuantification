@@ -6,18 +6,11 @@ This repository contains the official implementation of
 
 ## 🔍 Introduction
 
-This study introduces a diffusion-based framework for ECG noise quantification via reconstruction-based anomaly detection. The model learns to reconstruct clean ECG signals from potentially noisy inputs, with **reconstruction errors serving as proxies for noise levels**. This approach eliminates the need for explicit noise labels during inference.
-
-We utilize two complementary metrics tailored for specific evaluation purposes:
+This study introduces a diffusion-based framework for ECG noise quantification using reconstruction-based anomaly detection. The model is trained solely on clean ECG signals, learning to reconstruct clean representations from potentially noisy inputs. **Reconstruction errors serve as a proxy for noise levels** without requiring explicit noise labels during inference.
 
 - **Noise Quantification**: Peak Signal-to-Noise Ratio (**PSNR**), a robust metric for quantifying distortion in the time-frequency domain, is employed. PSNR is inversely proportional to noise levels:
   - **Lower PSNR** 📉💥 indicates **higher noise**.
   - **Higher PSNR** indicates **better signal quality**.
-
-- **Model Performance Evaluation**: Wasserstein-1 distance (**$W_1$**) compares reconstruction error distributions between clean and noise-labeled ECG segments. Unlike human-labeled classifications, which can be inconsistent, $W_1$ facilitates:
-  - Optimal architecture and sampling configuration selection.
-  - Identification and correction of mislabeled samples.
-  - Iterative refinement of the training dataset by filtering segments with low reconstruction errors.
 
 Our optimized model achieves robust noise quantification with only **three reverse diffusion steps**, ensuring efficient and scalable real-world applicability.
 
