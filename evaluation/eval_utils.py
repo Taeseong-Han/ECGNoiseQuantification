@@ -1,20 +1,39 @@
 import ast
 import torch
+
 import numpy as np
 import pandas as pd
-from typing import Union, List
-from pathlib import Path
 
 from tqdm import tqdm
+from pathlib import Path
+from typing import Union
 from torch.utils.data import DataLoader
-from models.vanilla_diffusion import DiffusionModel
-from models.latent_diffusion import LatentDiffusionModel
 from data.ptbxl_dataset import PTBXLDataset
-from model.model_utils.forward_reverse import forward_reverse_process
 from utils.inference import load_diffusion_model
+from utils.scalogram_utils import model_output_to_image
+from evaluation.eval_metrics import NoiseQuantificationMetrics, compute_noise_metrics
 
 
-def measure_noise_ptb(
+def noise_quantification(
+        model: torch.nn.Module,
+        inputs: torch.Tensor,
+        diffusion_timestep: Union[int, torch.Tensor],
+        step_interval: int,
+        discretize: bool
+) -> NoiseQuantificationMetrics:
+    """
+    Generate denoised images and compute noise metrics for a batch.
+    """
+    denoised = model.generate_denoised_sample(
+        inputs, diffusion_timestep, step_interval
+    )
+    orig_imgs = model_output_to_image(inputs.squeeze(1).cpu().numpy(), discretize)
+    clean_imgs = model_output_to_image(denoised.squeeze(1).cpu().numpy(), discretize)
+
+    return compute_noise_metrics(orig_imgs, clean_imgs)
+
+
+def noise_quantification_ptbxl(
         checkpoint_path: Union[str, Path],
         ref_min: float,
         ref_max: float,
@@ -24,10 +43,14 @@ def measure_noise_ptb(
         noise_scheduler_type: str,
         use_ldm: bool,
         step_interval: int,
-        include_all_folds: bool ,
+        include_all_folds: bool,
         discretize: bool = True,
         seed: int = 123,
 ):
+    """
+    Run noise quantification over the PTB-XL dataset and save results.
+    """
+    # Setup
     torch.manual_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -39,80 +62,70 @@ def measure_noise_ptb(
         train=False,
         include_all_folds=include_all_folds,
     )
-    dataloader = DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=False,
-        drop_last=False,
-    )
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
+    # Load model once
     model = load_diffusion_model(checkpoint_path, noise_scheduler_type, use_ldm, device)
     if isinstance(diffusion_timestep, int):
-        diffusion_timestep = torch.IntTensor([diffusion_timestep]).to(device)
+        diffusion_timestep = torch.tensor([diffusion_timestep], dtype=torch.int32, device=device)
 
-    psnr, ssim, mse, mae = [], [], [], []
-    for image in tqdm(dataloader):
-        output = forward_reverse_process(
-            model,
-            image,
-            device,
-            timestep,
-            quantization,
-            step=step,
+    # Prepare accumulator
+    metrics_accum = {
+        'psnr': [], 'ssim': [], 'mse': [], 'mae': []
+    }
+
+    # Inference loop
+    for batch in tqdm(loader, desc='Quantifying Noise'):
+        batch = batch.to(device)
+        metrics = noise_quantification(
+            model, batch, diffusion_timestep, step_interval, discretize
         )
-        psnr.extend(output.psnr)
-        ssim.extend(output.ssim)
-        mse.extend(output.mse)
-        mae.extend(output.mae)
+        metrics_accum['psnr'].extend(metrics.psnr.tolist())
+        metrics_accum['ssim'].extend(metrics.ssim.tolist())
+        metrics_accum['mse'].extend(metrics.mse.tolist())
+        metrics_accum['mae'].extend(metrics.mae.tolist())
 
-    columns = ['filename_hr', 'scp_codes', 'baseline_drift', 'static_noise',
-               'burst_noise', 'electrodes_problems', 'clean', 'strat_fold']
-    columns.extend([i for i in range(12)])
+    # Load reference labels
+    label_path = Path(__file__).resolve().parents[1] / 'data' / 'database' / 'ptbxl_label_dropna.csv'
+    labels = pd.read_csv(label_path)
+    base_cols = ['filename_hr', 'scp_codes', 'baseline_drift', 'static_noise',
+                 'burst_noise', 'electrodes_problems', 'clean', 'strat_fold']
 
-    psnr_df = pd.DataFrame(columns=columns)
-    ssim_df = pd.DataFrame(columns=columns)
-    mse_df = pd.DataFrame(columns=columns)
-    mae_df = pd.DataFrame(columns=columns)
+    # Define output directory and file naming
+    out_dir = Path('results')
+    out_dir.mkdir(parents=True, exist_ok=True)
+    tag = 'ldm' if use_ldm else 'dm'
+    scheduler = f"{noise_scheduler_type}-{step_interval}" if noise_scheduler_type != 'ddpm' else noise_scheduler_type
+    timestep = int(diffusion_timestep.item())
+    prefix = 'all_' if include_all_folds else ''
 
-    Y = pd.read_csv(PTBXL_DIR / 'ptb_label_dropna.csv')
-    start_idx, end_idx = 0, 0
-    for idx, file in tqdm(enumerate(Y.filename_hr)):
-        clean_idx = ast.literal_eval(Y.clean[idx])
-        noise_idx = sorted(set(range(12)) - set(clean_idx))
+    # Metrics to export
+    metrics_list = ['psnr', 'ssim', 'mse', 'mae']
 
-        if int(Y.strat_fold[idx]) == 10 or (all_data is True):
-            end_idx = start_idx + 12
-            psnr_ = psnr[start_idx:end_idx]
-            ssim_ = ssim[start_idx:end_idx]
-            mse_ = mse[start_idx:end_idx]
-            mae_ = mae[start_idx:end_idx]
-            start_idx = end_idx
+    for metric in metrics_list:
+        rows = []
+        idx_ptr = 0
 
-        else:
-            psnr_, ssim_, mse_, mae_ = [np.nan] * 12, [np.nan] * 12, [np.nan] * 12, [np.nan] * 12
-            if len(noise_idx) > 0:
-                for i in noise_idx:
-                    psnr_[i] = psnr[start_idx]
-                    ssim_[i] = ssim[start_idx]
-                    mse_[i] = mse[start_idx]
-                    mae_[i] = mae[start_idx]
-                    start_idx += 1
-                    end_idx += 1
+        for idx, row in labels.iterrows():
+            fold = int(row['strat_fold'])
+            clean_leads = ast.literal_eval(row['clean'])
+            noise_leads = [i for i in range(12) if i not in clean_leads]
+            slice_len = 12 if (include_all_folds or fold == 10) else len(noise_leads)
 
-        psnr_df.loc[idx] = Y.loc[idx].tolist() + psnr_
-        ssim_df.loc[idx] = Y.loc[idx].tolist() + ssim_
-        mse_df.loc[idx] = Y.loc[idx].tolist() + mse_
-        mae_df.loc[idx] = Y.loc[idx].tolist() + mae_
+            metric_vals = metrics_accum[metric][idx_ptr: idx_ptr + slice_len]
+            idx_ptr += slice_len
 
-    if noise_scheduler_type == 'ddpm':
-        save_name = f'{model_directory}_{noise_scheduler_type}_ema{model_id}_ts{int(timestep)}'
-    else:
-        save_name = f'{model_directory}_{noise_scheduler_type}{step}_ema{model_id}_ts{int(timestep)}'
+            lead_vals = [np.nan] * 12
+            if include_all_folds or fold == 10:
+                lead_vals = metric_vals[:12]
+            else:
+                for pos, lead in enumerate(noise_leads):
+                    lead_vals[lead] = metric_vals[pos]
 
-    if all_data is True:
-        save_name = f'all_{save_name}'
+            row_dict = row[base_cols].to_dict()
+            row_dict.update({f'lead_{i}': lead_vals[i] for i in range(12)})
+            rows.append(row_dict)
 
-    psnr_df.to_csv(PTBXL_METRIC_DIR / f"{save_name}_psnr.csv", index=False)
-    ssim_df.to_csv(PTBXL_METRIC_DIR / f"{save_name}_ssim.csv", index=False)
-    mse_df.to_csv(PTBXL_METRIC_DIR / f"{save_name}_mse.csv", index=False)
-    mae_df.to_csv(PTBXL_METRIC_DIR / f"{save_name}_mae.csv", index=False)
+        df = pd.DataFrame(rows, columns=base_cols + [f'lead_{i}' for i in range(12)])
+        filename = f"{prefix}{tag}_{scheduler}_t{timestep}_{metric}.csv"
+        df.to_csv(out_dir / filename, index=False)
