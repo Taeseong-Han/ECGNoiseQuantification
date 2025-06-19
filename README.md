@@ -25,9 +25,9 @@ Our optimized model achieves robust noise quantification with only **three rever
 
 ![External validation](figures/external_validation.jpg)
 
-**Figure** demonstrates the practical utility of PSNR-based segment analysis and PSNR distribution:
+**Figure** demonstrates the practical utility of PSNR-based segment analysis and $W_1$-based evaluation (leveraging PSNR distributions):
 
-- **(a)** Examples from the **BUT QDB** dataset highlight discrepancies where a segment labeled as "Clean" by humans exhibited a lower PSNR (higher noise) compared to another segment labeled "Moderate Noise."
+- **(a)** Examples from the BUT QDB dataset highlight discrepancies where a segment labeled as "Clean" by humans exhibited a lower PSNR (higher noise) compared to another segment labeled "Moderate Noise." Specifically, noise-labeled samples with high PSNR appeared visually clean, whereas clean-labeled samples with low PSNR clearly exhibited noise artifacts.
 
 - **(b)** Analysis of data from the **CinC Challenge 2011** dataset revealed significant overlap in PSNR distributions between human-labeled clean and noisy segments. Further visual inspection (Figure (b)) confirmed these overlapping segments indeed exhibited similar noise characteristics, underscoring the limitations of human annotations.
 
