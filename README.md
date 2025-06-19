@@ -111,7 +111,7 @@ You can download the raw PTB-XL dataset from PhysioNet:
 To train the autoencoder on the superlet-transformed PTB-XL dataset, run the following command from the project root:
 
 ```bash
-python -m train.train_autoencoder
+python -m train.train_autoencoder --discretization
 ```
 
 This will launch training with default settings using discretized superlet scalograms. You can customize training using

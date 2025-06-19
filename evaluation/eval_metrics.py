@@ -1,6 +1,8 @@
 import numpy as np
 
 from dataclasses import dataclass
+from scipy.stats import wasserstein_distance
+from sklearn.preprocessing import StandardScaler
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 
@@ -13,8 +15,8 @@ class NoiseQuantificationMetrics:
 
 
 def compute_noise_metrics(
-    orig_imgs: np.ndarray,
-    clean_imgs: np.ndarray
+        orig_imgs: np.ndarray,
+        clean_imgs: np.ndarray
 ) -> NoiseQuantificationMetrics:
     """
     Compute PSNR, SSIM, MSE, and MAE between corresponding original
@@ -47,3 +49,12 @@ def compute_noise_metrics(
         mse=mse_vals,
         mae=mae_vals,
     )
+
+
+def compute_w1_distance(u_values, v_values):
+    scaler = StandardScaler()
+    scaler.fit(np.array(u_values + v_values).reshape(-1, 1))
+    u_values = scaler.transform(np.array(u_values).reshape(-1, 1)).flatten()
+    v_values = scaler.transform(np.array(v_values).reshape(-1, 1)).flatten()
+
+    return wasserstein_distance(u_values, v_values)

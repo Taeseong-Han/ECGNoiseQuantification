@@ -10,35 +10,130 @@ from models.vanilla_diffusion import DiffusionModel
 from diffusers.optimization import get_cosine_schedule_with_warmup
 
 
-def get_parser():
-    parser = argparse.ArgumentParser(description="Train Latent Diffusion on PTB-XL Superlet Dataset")
+def get_parser() -> argparse.ArgumentParser:
+    """
+    Create argument parser for training Diffusion Model on PTB-XL Superlet Dataset.
+    Organizes arguments into logical groups for clarity.
+    """
+    parser = argparse.ArgumentParser(
+        description="Train Diffusion Model on PTB-XL Superlet Dataset"
+    )
 
-    parser.add_argument('--log_dir', type=Path,
-                        default=Path(__file__).resolve().parents[1] / "output/logs")
-    parser.add_argument('--superlet_dir', type=Path,
-                        default=Path(__file__).resolve().parents[1] / "data/database/ptbxl_superlet32")
-    parser.add_argument('--save_path', type=Path,
-                        default=Path(__file__).resolve().parents[1] / "output/dm_model")
+    # Paths and I/O
+    io_group = parser.add_argument_group('I/O')
+    io_group.add_argument(
+        '--log_dir',
+        type=Path,
+        default=Path(__file__).resolve().parents[1] / 'output/logs',
+        help='Directory to save training logs.'
+    )
+    io_group.add_argument(
+        '--superlet_dir',
+        type=Path,
+        default=Path(__file__).resolve().parents[1] / 'data/database/ptbxl_superlet32',
+        help='Directory containing precomputed superlet scalograms.'
+    )
+    io_group.add_argument(
+        '--save_path',
+        type=Path,
+        default=Path(__file__).resolve().parents[1] / 'output/dm_model',
+        help='Directory to save the trained diffusion model.'
+    )
 
-    parser.add_argument('--learning_rate', type=float, default=1e-4)
-    parser.add_argument('--ema_rate', type=float, default=0.999,
-                        help="Exponential moving average rate for model weights.")
-    parser.add_argument('--num_epochs', type=int, default=50)
-    parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--gradient_accumulation_steps', type=int, default=1)
-    parser.add_argument('--lr_warmup_steps', type=int, default=0)
-    parser.add_argument('--num_train_timesteps', type=int, default=1000)
-    parser.add_argument('--mixed_precision', type=str, default='no', choices=['no', 'fp16', 'bf16'])
-    parser.add_argument('--num_processes', type=int, default=1,
-                        help='Number of processes to launch for distributed training (used by notebook_launcher).')
+    # Model settings
+    model_group = parser.add_argument_group('Model')
+    model_group.add_argument(
+        '--noise_scheduler_type',
+        choices=['ddpm', 'ddim'],
+        default='ddpm',
+        help="Diffusion scheduler type: 'ddpm' or 'ddim'."
+    )
+    model_group.add_argument(
+        '--num_train_timesteps',
+        type=int,
+        default=1000,
+        help='Number of diffusion timesteps for training (1-1000).'
+    )
+    model_group.add_argument(
+        '--mixed_precision',
+        choices=['no', 'fp16', 'bf16'],
+        default='no',
+        help="Mixed precision mode: 'no', 'fp16', or 'bf16'."
+    )
 
-    parser.add_argument('--ref_min', type=float, default=0.0,
-                        help="Minimum reference value for scalogram normalization.")
-    parser.add_argument('--ref_max', type=float, default=-8.0,
-                        help="Maximum reference value for scalogram normalization.")
-    parser.add_argument('--discretization', action='store_false')
-    parser.add_argument('--noise_scheduler_type', type=str, default='ddpm', choices=['ddpm', 'ddim'])
-    parser.add_argument('--seed', type=int, default=123)
+    # Training hyperparameters
+    train_group = parser.add_argument_group('Training')
+    train_group.add_argument(
+        '--learning_rate',
+        type=float,
+        default=1e-4,
+        help='Initial learning rate.'
+    )
+    train_group.add_argument(
+        '--ema_rate',
+        type=float,
+        default=0.999,
+        help='EMA rate for updating model weights.'
+    )
+    train_group.add_argument(
+        '--num_epochs',
+        type=int,
+        default=50,
+        help='Number of training epochs.'
+    )
+    train_group.add_argument(
+        '--batch_size',
+        type=int,
+        default=32,
+        help='Batch size for training.'
+    )
+    train_group.add_argument(
+        '--gradient_accumulation_steps',
+        type=int,
+        default=1,
+        help='Steps to accumulate gradients before optimizer step.'
+    )
+    train_group.add_argument(
+        '--lr_warmup_steps',
+        type=int,
+        default=0,
+        help='Number of warmup steps for learning rate scheduler.'
+    )
+    train_group.add_argument(
+        '--num_processes',
+        type=int,
+        default=1,
+        help='Number of processes for distributed training.'
+    )
+
+    # Preprocessing options
+    prep_group = parser.add_argument_group('Preprocessing')
+    prep_group.add_argument(
+        '--ref_min',
+        type=float,
+        default=0.0,
+        help='Minimum value for scalogram normalization.'
+    )
+    prep_group.add_argument(
+        '--ref_max',
+        type=float,
+        default=-8.0,
+        help='Maximum value for scalogram normalization.'
+    )
+    prep_group.add_argument(
+        '--discretization',
+        action='store_true',
+        help='Enable discretization of scalograms before training.'
+    )
+
+    # Miscellaneous
+    misc_group = parser.add_argument_group('Misc')
+    misc_group.add_argument(
+        '--seed',
+        type=int,
+        default=123,
+        help='Random seed for reproducibility.'
+    )
 
     return parser
 
