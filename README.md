@@ -83,7 +83,7 @@ import numpy as np
 from utils.inference import ecg_noise_quantification
 
 checkpoint_path = "[YOUR_PATH]/pretrained_ldm.pth"
-ecg = np.random.randn(12,5000)
+ecg = np.load("./data/database/ecg_example.npz")['signal']
 
 output = ecg_noise_quantification(
     ecg=ecg,  # numpy array of shape (leads, timepoints)
