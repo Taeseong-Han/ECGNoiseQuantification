@@ -50,7 +50,8 @@ This project was developed and tested on the following environment:
 - Python: 3.8.10
 - PyTorch: 2.1.1 + CUDA 11.8
 >⚠️ Note on CUDA compatibility:
-> This repository uses PyTorch and JAX.
+> 
+> This repository uses PyTorch and JAX. 
 > Please install the correct CUDA-compatible versions of these libraries based on your local environment.
 
 ## 🧪 Example Usage
