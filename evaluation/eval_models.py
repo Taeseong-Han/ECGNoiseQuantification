@@ -1,8 +1,9 @@
 from typing import List
 from pathlib import Path
 
-from eval_metrics import compute_w1_distance
 from utils.file_metrics_sort import sort_ptbxl_metric_data
+from evaluation.eval_metrics import compute_w1_distance
+
 
 def find_result_files(
         directory: Path,
@@ -26,6 +27,7 @@ def find_result_files(
         p for p in directory.iterdir()
         if p.suffix == f".{extension}" and keyword in p.name and "all" not in p.name
     ])
+
 
 def evaluate_models(
         keyword: str,
@@ -59,6 +61,7 @@ def evaluate_models(
             f"W1(clean vs. burst): {results['burst']:.4f} | "
             f"W1(clean vs. baseline): {results['baseline']:.4f}"
         )
+
 
 if __name__ == "__main__":
     import argparse

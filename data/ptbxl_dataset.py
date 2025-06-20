@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from pathlib import Path
-from typing import Union, List
+from typing import Union, List, Set
 from torch.utils.data import Dataset
 from utils.file_metrics_sort import sort_ptbxl_metric_data
 from utils.scalogram_utils import scalogram_to_model_input
@@ -80,7 +80,7 @@ def burst_static_intersection(
         metadata: str,
         static_percentage: float,
         burst_percentage: float,
-) -> list[str]:
+) -> List[str]:
     """
     Select top-n % leads from both static and burst metric files and return their intersection.
 
@@ -97,11 +97,11 @@ def burst_static_intersection(
     """
 
     # Helper to get top-n percent filenames
-    def get_top_n(file_path: str, pct: float, reverse: bool) -> set[str]:
-        container = sort_ptbxl_metric_data(file_path, is_train=True)
+    def get_top_n(file_path: str, pct: float, reverse: bool) -> Set[str]:
+        container = sort_ptbxl_metric_data(file_path, train=True)
         files = container.get_filenames_by_metadata(metadata)
         n = max(1, int(len(files) * pct))
-        # reverse=False => lowest values first; reverse=True => highest first
+        # reverse=False => lowest values first; reverse=True => the highest first
         sorted_files = list(files)
         if reverse:
             sorted_files = sorted_files[::-1]

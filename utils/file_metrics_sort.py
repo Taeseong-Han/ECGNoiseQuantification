@@ -45,7 +45,7 @@ class FileDataset:
         return [f.metric_value for f in self.files if keyword in f.metadata]
 
 
-def build_metadata(label: str, is_norm: str, lead: int, types: list[str] = None) -> str:
+def build_metadata(label: str, is_norm: str, lead: int, types: str = None) -> str:
     parts = [label, is_norm, f'lead{lead}']
     if types:
         parts.extend(types)
