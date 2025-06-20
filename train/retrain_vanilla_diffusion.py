@@ -149,13 +149,13 @@ def get_parser() -> argparse.ArgumentParser:
     selection_group.add_argument(
         '--static_percentage',
         type=float,
-        default=0.1,
+        default=0.5,
         help='Fraction (0< p <=1) of top static samples to select.'
     )
     selection_group.add_argument(
         '--burst_percentage',
         type=float,
-        default=0.1,
+        default=0.5,
         help='Fraction (0< p <=1) of top burst samples to select.'
     )
 
