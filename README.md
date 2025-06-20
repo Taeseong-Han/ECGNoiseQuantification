@@ -156,6 +156,7 @@ Quantify ECG signal noise using a pretrained diffusion model.
 Reconstruction metrics like PSNR serve as proxies for noise severity.
 
 This outputs per-lead metrics (PSNR, SSIM, etc.) in CSV format for further analysis.
+
 ```bash
 python -m evaluation.run_noise_quantification \
   --checkpoint [YOUR MODEL PATH] \
@@ -185,6 +186,7 @@ python -m evaluation.eval_models \
 ```
 
 **Arguments:**
+
 - --keyword: Substring used to filter result files (e.g., 'ddpm', 't250', etc.)
 
 This helps quantify how well different models separate clean and noisy segments under various noise types (static,
@@ -215,8 +217,8 @@ This provides reconstruction-based quality scores (e.g., PSNR) for every segment
 
 #### Step 2: Select High-Confidence Clean Segments and Retrain
 
-Using the model that showed strong sensitivity to static and burst noise (high W₁-distance),
-extract the top-N% clean segments least likely to be mislabeled:
+Identify top-N% of clean segments with the highest quality (e.g., PSNR)
+under the model that showed strong sensitivity to static and burst noise (high W₁-distance):
 
 ```bash
 python -m train.retrain_autoencoder \
@@ -233,7 +235,8 @@ This filters out mislabeled or ambiguous clean segments and enables retraining o
 high-confidence subset of the original dataset.
 
 <br>
-<br>
+
+---
 
 ## 📄 License and Citation
 
