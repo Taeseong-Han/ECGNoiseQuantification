@@ -125,7 +125,9 @@ Replace [PTBXL_RAW_PATH] with the full path to your downloaded PTB-XL dataset , 
 Train the autoencoder on discretized superlet scalograms:
 
 ```bash
-python -m train.train_autoencoder --discretization
+python -m train.train_autoencoder \
+  --discretization \
+  --save_path [YOUR MODEL PATH]
 ```
 
 This model compresses input scalograms into a latent space and is a required pretraining step for training the latent
