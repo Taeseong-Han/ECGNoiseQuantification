@@ -42,6 +42,7 @@ Clone the repository and install required dependencies:
 ```bash
 git clone https://github.com/Taeseong-Han/ECGNoiseQuantification.git
 cd ECGNoiseQuantification
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 #### ✅ Environment
