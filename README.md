@@ -59,6 +59,8 @@ pip install jax==0.3.15
 ```
 🔧 Adjust versions if you're using a different CUDA version
 
+<br>
+
 ## 🧪 Example Usage
 
 #### 🔗 Pretrained Model
