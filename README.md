@@ -37,6 +37,19 @@ and scalable real-world applicability.
 
 <br>
 
+## ⚙️ Installation
+Clone the repository and install required dependencies:
+```bash
+git clone https://github.com/Taeseong-Han/ECGNoiseQuantification.git
+cd ECGNoiseQuantification
+pip install -r requirements.txt
+```
+#### ✅ Environment
+This project was developed and tested on the following environment:
+
+- Python: 3.8.10
+- PyTorch: 2.1.1 + CUDA 11.8
+
 ## 🧪 Example Usage
 
 #### 🔗 Pretrained Model
