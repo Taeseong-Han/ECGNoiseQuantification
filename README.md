@@ -45,14 +45,19 @@ cd ECGNoiseQuantification
 pip install -r requirements.txt
 ```
 #### ✅ Environment
-This project was developed and tested on the following environment:
+This project was developed and tested on the Python: 3.8.10 environment
 
-- Python: 3.8.10
-- PyTorch: 2.1.1 + CUDA 11.8
->⚠️ Note on CUDA compatibility:
-> 
-> This repository uses PyTorch and JAX. 
-> Please install the correct CUDA-compatible versions of these libraries based on your local environment.
+#### ⚠️ CUDA Compatibility
+Due to CUDA version compatibility, install the following packages after installing requirements.txt
+```bash
+# PyTorch (CUDA 11.8)
+pip install torch==2.1.1 torchvision==0.16.1 --index-url https://download.pytorch.org/whl/cu118
+
+# JAX (CUDA 11.8 + cuDNN 8.2)
+pip install jaxlib==0.3.25+cuda11.cudnn82 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+pip install jax==0.3.15
+```
+🔧 Adjust versions if you're using a different CUDA version
 
 ## 🧪 Example Usage
 
@@ -72,9 +77,11 @@ see [demo.ipynb](https://github.com/Taeseong-Han/ECGNoiseQuantification/blob/mai
 snippet:
 
 ```python
+import numpy as np
 from utils.inference import ecg_noise_quantification
 
 checkpoint_path = "[YOUR_PATH]/pretrained_ldm.pth"
+ecg = np.random.randn(12,5000)
 
 output = ecg_noise_quantification(
     ecg=ecg,  # numpy array of shape (leads, timepoints)
