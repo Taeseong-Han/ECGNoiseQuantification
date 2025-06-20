@@ -84,17 +84,20 @@ output.cleaned_image: np.ndarray  # shape: (leads, segments, H, W)
 
 ## 🧬 Reproducibility: Data Preprocessing and Training
 
-The following sections provide instructions for:
+This section provides step-by-step instructions to:
 
-- Transforming raw PTB-XL ECG data using superlet transform
-- Training the autoencoder used for latent diffusion
-- Running full training pipelines for diffusion models
+- Convert raw PTB-XL ECG data into time-frequency representations
+- Train the autoencoder used in latent diffusion
+- Run noise quantification and evaluation
+- Refine training data based on reconstruction-based noise analysis
 
 ---
 
 #### 🖼️ Framework Overview
 
 ![Framework Overview](figures/Framework_overview.jpg)
+
+---
 
 ### 🔄 Superlet Transform on PTB-XL Data
 
@@ -105,34 +108,29 @@ python -m preprocessing.superlet_transform_ptbxl \
   --ptbxl_raw_path [PTBXL_RAW_PATH]
 ```
 
-Replace [PTBXL_RAW_PATH] with the full path to your downloaded PTB-XL dataset.
-
-Example:
+Replace [PTBXL_RAW_PATH] with the full path to your downloaded PTB-XL dataset , e.g.:
 
 ```bash
 --ptbxl_raw_path ~/Database/physionet.org/files/ptb-xl/1.0.3
 ```
 
-📥 **Download PTB-XL Dataset**
-
-You can download the raw PTB-XL dataset from PhysioNet:
-
+📥 **Download the dataset from PhysioNet:**
 🔗 https://physionet.org/content/ptb-xl/1.0.3/
 
 <br>
 
 ### 🏋️Train Model
 
-To train the autoencoder on the superlet-transformed PTB-XL dataset, run the following command from the project root:
+Train the autoencoder on discretized superlet scalograms:
 
 ```bash
 python -m train.train_autoencoder --discretization
 ```
 
-This will launch training with default settings using discretized superlet scalograms. You can customize training using
-additional arguments.
-This autoencoder acts as the feature compressor for the latent diffusion model and must be trained before training the
-latent diffusion model.
+This model compresses input scalograms into a latent space and is a required pretraining step for training the latent
+diffusion model.
+If you're using the vanilla diffusion model, you can train it directly without this autoencoder stage.
+You can customize training using additional CLI options.
 
 > ⚠️ The training script structure is unified across this project.  
 > The same CLI pattern applies to training:
@@ -146,18 +144,13 @@ latent diffusion model.
 > ```bash
 > python -m train.[script_name] [options]
 > ```
-> View all available arguments using:
-> ```bash
-> python -m train.[script_name] --help
-> ```
 
 <br>
 
 ### 📊 Noise Level Quantification
 
-Quantify ECG signal noise using a pretrained diffusion model. The model reconstructs clean
-versions of input scalograms, and PSNR (or other metrics) is used to quantify the reconstruction error,
-which serves as a proxy for noise.
+Quantify ECG signal noise using a pretrained diffusion model.
+Reconstruction metrics like PSNR serve as proxies for noise severity.
 
 ```bash
 python -m evaluation.run_noise_quantification \
@@ -166,42 +159,47 @@ python -m evaluation.run_noise_quantification \
   --noise_scheduler_type ddim \
   --step_interval 1 \
   --batch_size 32 \
-  --discretize \
+  --discretization \
   --output_dir ./evaluation/results
 ```
 
-If you wish to run quantification across all 10 folds (not just test set), add:
+To evaluate all 10 folds (not just the test set), include:
 
 ```bash
 --include_all_folds
 ```
 
+This outputs per-lead metrics (PSNR, SSIM, etc.) in CSV format for further analysis.
+
 <br>
 
-### 📈 Performance Evaluation Across Combinations
+### 📈 Performance Evaluation Across Experiments
 
-Compare multiple experiment results (e.g., different sampling settings or model types) 
-by computing Wasserstein-1 distances between clean vs noisy segment distributions.
+Compare multiple model configurations by computing Wasserstein-1 distances between metric distributions:
 
 ```bash
 python -m evaluation.eval_models \
- --keyword --output_dir
+  --keyword ddpm \
+  --output_dir ./evaluation/results
 ```
-**Options:**
-- --keyword: Substring to filter result files (e.g., 'ddpm', 't250', etc.)
-Output will display W₁ distances across noise types (e.g., clean vs. static, burst, baseline), 
-enabling objective comparison across configurations.
+
+**Arguments:**
+
+- --keyword: Substring used to filter result files (e.g., 'ddpm', 't250', etc.)
+-
+
+This helps quantify how well different models separate clean and noisy segments under various noise types (static,
+burst, baseline).
 
 <br>
 
-### 🧹 Refining Dataset and Retraining Model
+### 🧹 Dataset Refinement and Retraining
 
-To improve training quality, we refine the dataset by selecting only high-confidence clean segments 
-— based on reconstruction metrics, not human labels.
+Improve training by filtering clean segments based on model, not human labels.
 
 #### Step 1. Quantify Noise Across All Folds
-Run noise quantification on the full PTB-XL dataset to evaluate every segment, 
-including clean-labeled ones:
+
+Run noise quantification over the full PTB-XL dataset, including clean-labeled segments:
 
 ```bash
 python -m evaluation.run_noise_quantification \
@@ -213,10 +211,12 @@ python -m evaluation.run_noise_quantification \
   --output_dir ./evaluation/results
 
 ```
-This provides segment-level PSNR (or other metrics) used to reassess clean sample quality.
 
-#### Step 2: Select High-Confidence Clean Segments and Retraining Model
-Using the model that showed strong sensitivity to static and burst noise (high W₁-distance), 
+This provides reconstruction-based quality scores (e.g., PSNR) for every segment in the dataset.
+
+#### Step 2: Select High-Confidence Clean Segments and Retrain
+
+Using the model that showed strong sensitivity to static and burst noise (high W₁-distance),
 extract the top-N% clean segments least likely to be mislabeled:
 
 ```bash
@@ -230,8 +230,9 @@ python -m train.retrain_autoencoder \
   --save_path ./output/ae_model_refined
 
 ```
-This refines the training set to include only segments that are consistently high-quality 
-under both static and burst noise evaluations, enabling robust model retraining.
+
+This filters out mislabeled or ambiguous clean segments and enables retraining on a refined,
+high-confidence subset of the original dataset.
 
 <br>
 <br>
