@@ -46,7 +46,6 @@ ipython==8.12.3
 ipython-genutils==0.2.0
 isoduration==20.11.0
 jax==0.3.25
-jaxlib==0.3.25+cuda11.cudnn82
 jedi==0.19.2
 Jinja2==3.1.4
 joblib==1.4.2
@@ -139,8 +138,6 @@ tifffile==2023.7.10
 tinycss2==1.2.1
 tokenizers==0.20.3
 tomli==2.2.1
-torch==2.1.1+cu118
-torchvision==0.16.1+cu118
 tornado==6.4.2
 tqdm==4.67.1
 traitlets==5.14.3
