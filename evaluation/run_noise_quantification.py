@@ -69,7 +69,7 @@ def get_parser() -> argparse.ArgumentParser:
         help="Maximum value for scalogram normalization."
     )
     parser.add_argument(
-        '--discretize',
+        '--discretization',
         action='store_true',
         help="Discretize images before computing metrics."
     )
@@ -119,7 +119,7 @@ def main() -> None:
         use_ldm=args.use_ldm,
         step_interval=args.step_interval,
         include_all_folds=args.include_all_folds,
-        discretize=args.discretize,
+        discretize=args.discretization,
         seed=args.seed,
     )
 
