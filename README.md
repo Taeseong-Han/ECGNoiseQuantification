@@ -55,7 +55,7 @@ pip install torch==2.1.1 torchvision==0.16.1 --index-url https://download.pytorc
 
 # JAX (CUDA 11.8 + cuDNN 8.2)
 pip install jaxlib==0.3.25+cuda11.cudnn82 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-pip install jax==0.3.15
+pip install jax==0.3.25
 ```
 🔧 Adjust versions if you're using a different CUDA version
 
