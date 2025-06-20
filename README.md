@@ -176,6 +176,8 @@ If you wish to run quantification across all 10 folds (not just test set), add:
 --include_all_folds
 ```
 
+<br>
+
 ### 📈 Performance Evaluation Across Combinations
 
 Compare multiple experiment results (e.g., different sampling settings or model types) 
@@ -190,7 +192,7 @@ python -m evaluation.eval_models \
 Output will display W₁ distances across noise types (e.g., clean vs. static, burst, baseline), 
 enabling objective comparison across configurations.
 
-
+<br>
 
 ### 🧹 Refining Dataset and Retraining Model
 
