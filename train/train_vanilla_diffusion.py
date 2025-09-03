@@ -110,13 +110,13 @@ def get_parser() -> argparse.ArgumentParser:
     prep_group.add_argument(
         '--ref_min',
         type=float,
-        default=0.0,
+        default=-8.0,
         help='Minimum value for scalogram normalization.'
     )
     prep_group.add_argument(
         '--ref_max',
         type=float,
-        default=-8.0,
+        default=0.0,
         help='Maximum value for scalogram normalization.'
     )
     prep_group.add_argument(
